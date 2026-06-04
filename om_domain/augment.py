@@ -7,7 +7,7 @@
 
 import random
 import numpy as np
-from PIL import ImageFilter
+from PIL import Image, ImageFilter
 import torchvision.transforms.functional as TF
 
 
@@ -36,6 +36,9 @@ class MicroscopyAugment:
                  sp_noise_prob=0.0,             # 椒盐噪声触发概率 [0,1]
                  sp_noise_amount=0.005,          # 噪声像素占比 [0,1]，典型值 0.001~0.02
                  sp_noise_salt_ratio=0.5,        # 盐噪声（白点）占比，余量为胡椒噪声（黑点）
+                 # -- 整体色彩扰动（色温/光源变化）--
+                 color_jitter_range=None,        # RGB 通道偏移范围，如 (-15, 15)；None=不启用
+                 color_jitter_prob=0.5,          # 触发概率 [0,1]
                  # -- 旋转 --
                  rotate_prob=0.0,               # 旋转触发概率 [0,1]
                  rotate_range=(-180, 180),      # 旋转角度范围 (min_deg, max_deg)
@@ -69,6 +72,8 @@ class MicroscopyAugment:
         self.sp_noise_prob = sp_noise_prob
         self.sp_noise_amount = sp_noise_amount
         self.sp_noise_salt_ratio = sp_noise_salt_ratio
+        self.color_jitter_range = color_jitter_range
+        self.color_jitter_prob = color_jitter_prob
         self.rotate_prob = rotate_prob
         self.rotate_range = rotate_range
 
@@ -80,6 +85,14 @@ class MicroscopyAugment:
             (img, angle): 增强后的 PIL 图像和旋转角度（度）
         """
         angle = 0.0
+
+        # 整体色彩扰动（色温/光源变化）—— 在亮度/对比度之前施加
+        if self.color_jitter_range is not None and random.random() < self.color_jitter_prob:
+            arr = np.array(img, dtype=np.int16)
+            for c in range(3):
+                shift = random.randint(*self.color_jitter_range)
+                arr[:, :, c] = np.clip(arr[:, :, c] + shift, 0, 255)
+            img = Image.fromarray(arr.astype(np.uint8))
 
         if random.random() < self.rotate_prob:
             angle = random.uniform(*self.rotate_range)

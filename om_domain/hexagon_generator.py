@@ -42,11 +42,12 @@ class HexagonGenerator(BaseDomainGenerator):
                  texture_std=8,                 # 畴区内部纹理噪声标准差，越大纹理越粗糙
                  bg_noise_std=3,                # 背景噪声标准差，越大背景越粗糙
                  # --- 几何 / 尺寸 ---
-                 base_r_range=(60, 90),         # 基础半径范围 (min, max)，最终半径受 mag_factor 和 supersample_ratio 联合缩放
+                 base_r_range=(60, 90),         # 基础半径范围 (min, max)，最终半径受 mag_factor、image_scale 和 supersample_ratio 联合缩放
                  base_num_range=(4, 6),         # 基础数量范围 (min, max)，最终数量按 1/(mag_factor²) 缩放
                  size_std=None,                 # 畴区半径的标准差；None=均匀分布，设为数值=正态分布（均值取自 base_r_range 中点）
                  mag_factor=1.0,               # 畴区缩放倍率（>1 放大畴区使其显得"更近"，<1 缩小畴区使其显得"更远"）
                  shape_jitter=0.05,             # 顶点径向扰动比例（0=正六边形，越大形状越不规则）
+                 image_scale=1.0,              # 画布缩放因子，半径 ∝ image_scale；改变画布尺寸时可设为 new_W/ref_W 以保持视觉一致
                  # --- 边缘毛刺（生长粗糙度）---
                  edge_burr_amplitude=0.0,       # 边缘毛刺振幅，相对边长比例；0=光滑边缘，0.05=明显毛刺
                  edge_burr_subdivisions=3,       # 每条边的细分点数（≥2）；越大毛刺越细密
@@ -90,6 +91,7 @@ class HexagonGenerator(BaseDomainGenerator):
         self.size_std = size_std
         self.mag_factor = mag_factor
         self.shape_jitter = shape_jitter
+        self.image_scale = image_scale
         # 边缘毛刺
         self.edge_burr_amplitude = edge_burr_amplitude
         self.edge_burr_subdivisions = edge_burr_subdivisions
@@ -215,11 +217,11 @@ class HexagonGenerator(BaseDomainGenerator):
         W = W_orig * self.supersample_ratio
         H = H_orig * self.supersample_ratio
 
-        # 根据倍率调整半径和数量
-        # 半径 ∝ mag_factor（线性）；数量 ∝ 1/mag_factor²（面积反比）
-        # 两者联合保证畴区密度（总面积/视场面积）不随倍率变化
-        r_min = int(self.base_r_range[0] * self.mag_factor * self.supersample_ratio)
-        r_max = int(self.base_r_range[1] * self.mag_factor * self.supersample_ratio)
+        # 根据倍率和画布缩放调整半径和数量
+        # 半径 ∝ mag_factor × image_scale（线性）
+        # 数量 ∝ 1/mag_factor²（面积反比，与 image_scale 无关——resize 不改变物体数量）
+        r_min = int(self.base_r_range[0] * self.mag_factor * self.supersample_ratio * self.image_scale)
+        r_max = int(self.base_r_range[1] * self.mag_factor * self.supersample_ratio * self.image_scale)
 
         count_min = max(1, int(self.base_num_range[0] / (self.mag_factor ** 2)))
         count_max = max(count_min + 1, int(self.base_num_range[1] / (self.mag_factor ** 2)))

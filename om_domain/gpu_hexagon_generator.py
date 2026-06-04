@@ -192,6 +192,7 @@ class GPUFastHexagonGenerator(BaseDomainGenerator):
                  size_std=None,
                  mag_factor=1.0,
                  shape_jitter=0.05,
+                 image_scale=1.0,        # 画布缩放因子，半径 ∝ image_scale
                  # --- 边缘毛刺 ---
                  edge_burr_amplitude=0.0,
                  edge_burr_subdivisions=3,
@@ -218,6 +219,7 @@ class GPUFastHexagonGenerator(BaseDomainGenerator):
         self.size_std = size_std
         self.mag_factor = mag_factor
         self.shape_jitter = shape_jitter
+        self.image_scale = image_scale
         # 边缘毛刺
         self.edge_burr_amplitude = edge_burr_amplitude
         self.edge_burr_subdivisions = edge_burr_subdivisions
@@ -349,8 +351,8 @@ class GPUFastHexagonGenerator(BaseDomainGenerator):
         H = H_orig * self.supersample_ratio
 
         # Phase 0: 计算有效半径和数量
-        r_min = int(self.base_r_range[0] * self.mag_factor * self.supersample_ratio)
-        r_max = int(self.base_r_range[1] * self.mag_factor * self.supersample_ratio)
+        r_min = int(self.base_r_range[0] * self.mag_factor * self.supersample_ratio * self.image_scale)
+        r_max = int(self.base_r_range[1] * self.mag_factor * self.supersample_ratio * self.image_scale)
 
         count_min = max(1, int(self.base_num_range[0] / (self.mag_factor ** 2)))
         count_max = max(count_min + 1, int(self.base_num_range[1] / (self.mag_factor ** 2)))
