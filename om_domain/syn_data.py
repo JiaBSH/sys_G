@@ -33,7 +33,7 @@ def main():
         edge_burr_amplitude=0.1,      # 边缘毛刺振幅（相对边长）；0=光滑，0.05=明显毛刺
         edge_burr_subdivisions=4,       # 每条边细分点数；越大毛刺越细密
         # -- 重叠控制 --
-        max_overlap_ratio=0.5,         # 单个畴区允许的最大重叠比例 [0,1]
+        max_overlap_ratio=0.3,         # 单个畴区允许的最大重叠比例 [0,1]
         max_overlap_count=3,           # 单个像素允许被覆盖的最大畴区数
         contain_threshold=0.85,        # 包含判定阈值；新畴区覆盖某旧畴区超此比例则拒绝
         min_area_factor=10,            # 最小有效面积因子，实际 min_area = factor × supersample_ratio
