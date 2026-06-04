@@ -28,7 +28,7 @@ class HexagonGenerator(BaseDomainGenerator):
 
     参数分组：
     - 颜色/纹理: color_mean, bg_mean, color_std, texture_std, bg_noise_std
-    - 几何/尺寸: base_r_range, base_num_range, size_std, mag_factor, shape_jitter
+    - 几何/尺寸: base_r_range, base_num_range, size_std, mag_factor, shape_jitter, orientation_std
     - 边缘毛刺: edge_burr_amplitude, edge_burr_subdivisions
     - 重叠控制: max_overlap_ratio, max_overlap_count, contain_threshold, min_area_factor
     - 渲染:     supersample_ratio
@@ -47,6 +47,7 @@ class HexagonGenerator(BaseDomainGenerator):
                  size_std=None,                 # 畴区半径的标准差；None=均匀分布，设为数值=正态分布（均值取自 base_r_range 中点）
                  mag_factor=1.0,               # 畴区缩放倍率（>1 放大畴区使其显得"更近"，<1 缩小畴区使其显得"更远"）
                  shape_jitter=0.05,             # 顶点径向扰动比例（0=正六边形，越大形状越不规则）
+                 orientation_std=0,            # 畴区取向标准差（度），0=所有畴区同向；值越大取向越随机
                  image_scale=1.0,              # 画布缩放因子，半径 ∝ image_scale；改变画布尺寸时可设为 new_W/ref_W 以保持视觉一致
                  # --- 边缘毛刺（生长粗糙度）---
                  edge_burr_amplitude=0.0,       # 边缘毛刺振幅，相对边长比例；0=光滑边缘，0.05=明显毛刺
@@ -71,6 +72,7 @@ class HexagonGenerator(BaseDomainGenerator):
             size_std: 畴区半径的标准差；None 时半径在范围内均匀采样，设置后在范围内正态采样
             mag_factor: 畴区缩放倍率；影响半径（线性）和数量（平方反比），不改画布尺寸
             shape_jitter: 顶点径向扰动比例；0 得到正六边形，0.1 产生明显不规则形状
+            orientation_std: 畴区取向的标准差（度）；0=所有畴区同向不旋转，值越大取向越随机
             edge_burr_amplitude: 边缘毛刺振幅（相对边长）；0=光滑，0.05=明显毛刺
             edge_burr_subdivisions: 每条边的细分点数（≥2）；越大毛刺越细密
             max_overlap_ratio: 新畴区与已有畴区的最大允许重叠面积比 [0,1]
@@ -91,6 +93,7 @@ class HexagonGenerator(BaseDomainGenerator):
         self.size_std = size_std
         self.mag_factor = mag_factor
         self.shape_jitter = shape_jitter
+        self.orientation_std = orientation_std
         self.image_scale = image_scale
         # 边缘毛刺
         self.edge_burr_amplitude = edge_burr_amplitude
@@ -111,14 +114,13 @@ class HexagonGenerator(BaseDomainGenerator):
         """
         生成带扰动的六边形顶点。
 
-        95% 概率取向接近 0°（正态分布 std=1°），
-        5% 概率取向有更大随机性（std=15°）。
+        畴区取向从 N(0, orientation_std°) 采样，orientation_std=0 时所有畴区同向。
         每个顶点半径有 ±shape_jitter 的均匀扰动。
         """
-        if random.random() < 0.95:
-            start_angle = np.random.normal(0, math.radians(1))
+        if self.orientation_std > 0:
+            start_angle = np.random.normal(0, math.radians(self.orientation_std))
         else:
-            start_angle = np.random.normal(0, math.radians(15))
+            start_angle = 0.0
 
         angles = np.linspace(0, 2 * math.pi, 6, endpoint=False) + start_angle
 

@@ -192,6 +192,7 @@ class GPUFastHexagonGenerator(BaseDomainGenerator):
                  size_std=None,
                  mag_factor=1.0,
                  shape_jitter=0.05,
+                 orientation_std=0,       # 畴区取向标准差（度），0=所有畴区同向
                  image_scale=1.0,        # 画布缩放因子，半径 ∝ image_scale
                  # --- 边缘毛刺 ---
                  edge_burr_amplitude=0.0,
@@ -219,6 +220,7 @@ class GPUFastHexagonGenerator(BaseDomainGenerator):
         self.size_std = size_std
         self.mag_factor = mag_factor
         self.shape_jitter = shape_jitter
+        self.orientation_std = orientation_std
         self.image_scale = image_scale
         # 边缘毛刺
         self.edge_burr_amplitude = edge_burr_amplitude
@@ -269,10 +271,10 @@ class GPUFastHexagonGenerator(BaseDomainGenerator):
 
     def _random_hexagon(self, cx, cy, r):
         """生成带扰动的六边形顶点。"""
-        if random.random() < 0.95:
-            start_angle = np.random.normal(0, math.radians(1))
+        if self.orientation_std > 0:
+            start_angle = np.random.normal(0, math.radians(self.orientation_std))
         else:
-            start_angle = np.random.normal(0, math.radians(15))
+            start_angle = 0.0
 
         angles = np.linspace(0, 2 * math.pi, 6, endpoint=False) + start_angle
 

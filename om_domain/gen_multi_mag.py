@@ -54,6 +54,7 @@ SHARED_GEN_KWARGS = dict(
     base_num_range=(200, 400),           # 基础数量范围 (mag=1, 最终=base/mag²)
     size_std=25,                         # 半径标准差 (None=均匀分布)
     shape_jitter=0.1,                    # 顶点扰动比例 (0=正六边形, 0.1=不规则)
+    orientation_std=0,                   # 畴区取向标准差（度）(0=同向, 值越大越随机)
     image_scale=2,                       # 画布缩放因子 (半径∝scale, 数量不变)
     # -- 边缘毛刺 --
     edge_burr_amplitude=0.08,            # 毛刺振幅 (0=光滑, 0.05=微刺, 0.1=锯齿)
