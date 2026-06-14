@@ -38,6 +38,10 @@
 
 ![shape_jitter — Vertex Radial Perturbation](gen_shape_jitter_—_Vertex_Radial_Perturbation.png)
 
+### orientation_std — Domain Orientation Spread
+
+![orientation_std — Domain Orientation Spread](gen_orientation_std_—_Domain_Orientation_Spread.png)
+
 ### size_std — Size Distribution
 
 ![size_std — Size Distribution](gen_size_std_—_Size_Distribution.png)
@@ -46,25 +50,25 @@
 
 ![base_num_range — Domain Count Range](gen_base_num_range_—_Domain_Count_Range.png)
 
-### edge_burr_amplitude — Edge Roughness Amplitude
+### edge_burr_amplitude — Edge Roughness Amplitude (20×)
 
-![edge_burr_amplitude — Edge Roughness Amplitude](gen_edge_burr_amplitude_—_Edge_Roughness_Amplitude.png)
+![edge_burr_amplitude — Edge Roughness Amplitude (20×)](gen_edge_burr_amplitude_—_Edge_Roughness_Amplitude_20×.png)
 
-### edge_burr_subdivisions — Edge Subdivision Density
+### edge_burr_subdivisions — Edge Subdivision Density (20×)
 
-![edge_burr_subdivisions — Edge Subdivision Density](gen_edge_burr_subdivisions_—_Edge_Subdivision_Density.png)
+![edge_burr_subdivisions — Edge Subdivision Density (20×)](gen_edge_burr_subdivisions_—_Edge_Subdivision_Density_20×.png)
 
-### max_overlap_ratio — Max Overlap Ratio
+### max_overlap_ratio — Max Overlap Ratio (20×)
 
-![max_overlap_ratio — Max Overlap Ratio](gen_max_overlap_ratio_—_Max_Overlap_Ratio.png)
+![max_overlap_ratio — Max Overlap Ratio (20×)](gen_max_overlap_ratio_—_Max_Overlap_Ratio_20×.png)
 
-### max_overlap_count — Max Pixel Coverage Layers
+### max_overlap_count — Max Pixel Coverage Layers (20×)
 
-![max_overlap_count — Max Pixel Coverage Layers](gen_max_overlap_count_—_Max_Pixel_Coverage_Layers.png)
+![max_overlap_count — Max Pixel Coverage Layers (20×)](gen_max_overlap_count_—_Max_Pixel_Coverage_Layers_20×.png)
 
-### contain_threshold — Containment Threshold
+### contain_threshold — Containment Threshold (20×)
 
-![contain_threshold — Containment Threshold](gen_contain_threshold_—_Containment_Threshold.png)
+![contain_threshold — Containment Threshold (20×)](gen_contain_threshold_—_Containment_Threshold_20×.png)
 
 ### supersample_ratio — Anti-aliasing Supersampling
 

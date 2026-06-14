@@ -196,40 +196,43 @@ GENERATOR_SHOWCASES = [
         "labels": ["50-100\n(sparse)", "100-200", "200-400\n(baseline)", "400-800", "800-1600\n(dense)"],
     },
 
-    # ---- Edge Burr ----
+    # ---- Edge Burr (20x magnification for clarity) ----
     {
-        "title": "edge_burr_amplitude — Edge Roughness Amplitude",
+        "title": "edge_burr_amplitude — Edge Roughness Amplitude (20×)",
         "param": "edge_burr_amplitude",
         "values": [0.0, 0.04, 0.08, 0.12, 0.18],
         "labels": ["0.0\n(smooth)", "0.04", "0.08\n(baseline)", "0.12", "0.18\n(rough)"],
-        "extra": {"edge_burr_subdivisions": 4},
+        "extra": {"edge_burr_subdivisions": 4, "mag_factor": 2.0},
     },
     {
-        "title": "edge_burr_subdivisions — Edge Subdivision Density",
+        "title": "edge_burr_subdivisions — Edge Subdivision Density (20×)",
         "param": "edge_burr_subdivisions",
         "values": [1, 2, 4, 8, 12],
         "labels": ["1\n(off)", "2", "4\n(baseline)", "8", "12\n(fine)"],
-        "extra": {"edge_burr_amplitude": 0.08},
+        "extra": {"edge_burr_amplitude": 0.08, "mag_factor": 2.0},
     },
 
-    # ---- Overlap Control ----
+    # ---- Overlap Control (20x magnification for clarity) ----
     {
-        "title": "max_overlap_ratio — Max Overlap Ratio",
+        "title": "max_overlap_ratio — Max Overlap Ratio (20×)",
         "param": "max_overlap_ratio",
         "values": [0.0, 0.15, 0.3, 0.6, 0.9],
         "labels": ["0.0\n(no overlap)", "0.15", "0.3\n(baseline)", "0.6", "0.9\n(heavy)"],
+        "extra": {"mag_factor": 2.0},
     },
     {
-        "title": "max_overlap_count — Max Pixel Coverage Layers",
+        "title": "max_overlap_count — Max Pixel Coverage Layers (20×)",
         "param": "max_overlap_count",
         "values": [1, 2, 3, 6, None],
         "labels": ["1\n(single)", "2", "3\n(baseline)", "6", "unlimited"],
+        "extra": {"mag_factor": 2.0},
     },
     {
-        "title": "contain_threshold — Containment Threshold",
+        "title": "contain_threshold — Containment Threshold (20×)",
         "param": "contain_threshold",
         "values": [0.3, 0.6, 0.85, 0.95],
         "labels": ["0.3\n(strict)", "0.6", "0.85\n(baseline)", "0.95\n(lenient)"],
+        "extra": {"mag_factor": 2.0},
     },
 
     # ---- Rendering ----
