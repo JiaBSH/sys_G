@@ -14,7 +14,9 @@
 """
 
 import os
+import json
 import argparse
+from datetime import datetime
 
 from om_domain.pipeline import DatasetPipeline
 from om_domain.hexagon_generator import HexagonGenerator
@@ -35,8 +37,8 @@ MAG_FACTORS = {
 # =========================================================================
 # 输出控制
 # =========================================================================
-TOTAL_PER_MAG = 100                             # 每个倍率生成的图像数量
-OUTPUT_ROOT = "./data/syn_multimag/raw"            # 输出根目录，结构: {root}/{mag}/image/ 和 label/
+TOTAL_PER_MAG = 2                            # 每个倍率生成的图像数量
+OUTPUT_ROOT = "./data/syn_multimag/raw_rotation"            # 输出根目录，结构: {root}/{mag}/image/ 和 label/
 IMAGE_SIZE = (2048, 1362)                          # 输出图像尺寸 (width, height)，长边 2048
 
 # =========================================================================
@@ -54,7 +56,7 @@ SHARED_GEN_KWARGS = dict(
     base_num_range=(200, 400),           # 基础数量范围 (mag=1, 最终=base/mag²)
     size_std=25,                         # 半径标准差 (None=均匀分布)
     shape_jitter=0.1,                    # 顶点扰动比例 (0=正六边形, 0.1=不规则)
-    orientation_std=0,                   # 畴区取向标准差（度）(0=同向, 值越大越随机)
+    orientation_std=60,                   # 畴区取向标准差（度）(0=同向, 值越大越随机)
     image_scale=2,                       # 画布缩放因子 (半径∝scale, 数量不变)
     # -- 边缘毛刺 --
     edge_burr_amplitude=0.08,            # 毛刺振幅 (0=光滑, 0.05=微刺, 0.1=锯齿)
@@ -114,6 +116,27 @@ def print_effective_params():
     print("=" * 48)
 
 
+def save_params(output_dir: str, mag_label: str, mag_factor: float, backend: str):
+    """保存本轮生成的全部参数到输出目录 params.json。
+
+    方便后续复现实验或追溯图像对应的配置。
+    """
+    params = {
+        "generated_at": datetime.now().isoformat(timespec="seconds"),
+        "mag_label": mag_label,
+        "mag_factor": mag_factor,
+        "total_per_mag": TOTAL_PER_MAG,
+        "image_size": list(IMAGE_SIZE),
+        "backend": backend,
+        "generator_kwargs": SHARED_GEN_KWARGS,
+        "augment_kwargs": SHARED_AUG_KWARGS,
+    }
+    param_path = os.path.join(output_dir, "params.json")
+    with open(param_path, "w", encoding="utf-8") as f:
+        json.dump(params, f, indent=2, ensure_ascii=False)
+    print(f"[Params] saved → {param_path}")
+
+
 def generate_one_magnification(mag_label: str, mag_factor: float, backend: str = "auto"):
     """为单个倍率生成 TOTAL_PER_MAG 张图像。
 
@@ -164,6 +187,9 @@ def generate_one_magnification(mag_label: str, mag_factor: float, backend: str =
         name_prefix=f"syn_{mag_label.replace('.', 'p')}",
         image_size=IMAGE_SIZE,
     )
+
+    # 保存生成参数
+    save_params(output_dir, mag_label, mag_factor, backend)
     print(f"[Done] {mag_label}: {TOTAL_PER_MAG} images → {output_dir}")
 
 
