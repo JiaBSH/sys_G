@@ -27,7 +27,7 @@ from om_domain.augment import MicroscopyAugment
 # 倍率 → mag_factor 映射（>1 高倍近景畴大稀少，<1 低倍远景畴小密集）
 # =========================================================================
 MAG_FACTORS = {
-    "2.5x":  0.25,
+    #"2.5x":  0.25,
     "5x":    0.5,
     "20x":   2.0,
     "50x":   5.0,
@@ -37,9 +37,9 @@ MAG_FACTORS = {
 # =========================================================================
 # 输出控制
 # =========================================================================
-TOTAL_PER_MAG = 2                            # 每个倍率生成的图像数量
-OUTPUT_ROOT = "./data/syn_multimag/raw_rotation"            # 输出根目录，结构: {root}/{mag}/image/ 和 label/
-IMAGE_SIZE = (2048, 1362)                          # 输出图像尺寸 (width, height)，长边 2048
+TOTAL_PER_MAG = 20                           # 每个倍率生成的图像数量
+OUTPUT_ROOT = "../data/syn_multimag/raw_rotation"            # 输出根目录，结构: {root}/{mag}/image/ 和 label/
+IMAGE_SIZE = (4096, 2724)                          # 输出图像尺寸 (width, height)，长边 2048
 
 # =========================================================================
 # 共享生成器参数（r = base_r × mag × scale × ss,  n = base_n / mag²）
@@ -57,12 +57,12 @@ SHARED_GEN_KWARGS = dict(
     size_std=25,                         # 半径标准差 (None=均匀分布)
     shape_jitter=0.1,                    # 顶点扰动比例 (0=正六边形, 0.1=不规则)
     orientation_std=60,                   # 畴区取向标准差（度）(0=同向, 值越大越随机)
-    image_scale=2,                       # 画布缩放因子 (半径∝scale, 数量不变)
+    image_scale=4,                       # 画布缩放因子 (半径∝scale, 数量不变)
     # -- 边缘毛刺 --
-    edge_burr_amplitude=0.08,            # 毛刺振幅 (0=光滑, 0.05=微刺, 0.1=锯齿)
+    edge_burr_amplitude=0.05,            # 毛刺振幅 (0=光滑, 0.05=微刺, 0.1=锯齿)
     edge_burr_subdivisions=4,            # 边细分点数 (≥2, 越大越细密)
     # -- 重叠控制 --
-    max_overlap_ratio=0.3,               # 单畴区最大重叠比例 [0,1]
+    max_overlap_ratio=0.1,               # 单畴区最大重叠比例 [0,1]
     max_overlap_count=3,                 # 单像素最大覆盖次数 (None=不限)
     contain_threshold=0.85,              # 包含判定阈值 (新畴区覆盖旧畴区超此比例则拒)
     min_area_factor=5,                   # 最小面积系数 (实际=系数×ss, 过小丢弃)
